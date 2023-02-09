@@ -9,13 +9,7 @@ resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada r
 no_read: int = 0   # Variável para poder encontrar alguma não leitura do pdf
 orientadores_achados: int = 0
 
-
-#ome_pdf: str = input() # Nome do pdf que será lido
-#resumo_nome: str = input() # Nome do resumo para criar o arquivo
-#arquivo_alunos: str = input() # nome do arquivos de alunos para ler
-#nome_orientadores: str = input()
-
-nome_pdf = "../../DadosEnic/DadosEnic/enic14.pdf"
+nome_pdf = "../DadosEnic/enic14.pdf"
 resumo_nome = "resumoOrientadores14.json"
 nome_orientadores = "../DadosOrientadores/orientadores2014Areas.txt"
 
@@ -56,7 +50,8 @@ def escreve_texto(indice, nome_orientador, dados_orientador):
     resumo["subarea"] = dados_orientador["subarea"]
     #Printa-se tudo que está após resumo, utilizamos posicaoResumoInicial + 8, pois 8 é o tamanho da string resumo e queremos iniciar após ela
     #Logo, termina quando achar a string "Palavras-Chave: que está no índice posicaoResumoFinal"
-    resumo["texto"] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal]
+    resumo["texto"] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
+    resumo["texto"] = resumo["texto"].rstrip()
 
     
     return resumo
@@ -80,12 +75,45 @@ def abre_orientadores(orientadores_arquivo):
         orientadores["subarea"] = orientadores_dados[1]
         orientadores_dictionary_list.append(orientadores.copy())
         indice += 2
-        
-            
-        
-    
+           
     return orientadores_dictionary_list
 
+def retorna_orientador_page(page):
+    
+    page = page.lower()
+    posicaoInicial = page.find('e-mail') + 6
+    posicaoFinal = page.find("orientador")
+    nome_total = str()
+    nome_total = page[posicaoInicial:posicaoFinal]
+    
+    #Processo de tratamento, vamos retirar os espaços entre os nomes
+    # Tratatei o nome até a primeira letra
+    for letra in nome_total:
+        if(letra == ')'):
+            nome_total = nome_total.replace(letra, '', 1)
+            break
+        nome_total = nome_total.replace(letra, '', 1)
+    
+    nome_total = nome_total.rstrip()
+    nome_total = nome_total.lstrip()
+
+
+   
+    # Retira todos os espaços em branco dubplo
+    nome_total = " ".join(re.split(r"\s+", nome_total))
+
+    # Ano 2014 vamos pegar apenas os dois primeiros nomes
+    nome = list()
+    
+    nome_total_separado = nome_total.split(' ')
+    
+    #Retira todos as letras sepradas
+    for name in nome_total_separado:
+        if len(name) == 1:
+            continue
+        nome.append(name.upper())
+        
+    return nome
 
 
 #Estamos abrindo um arquivo para leitura binária, nomeado de resumo
@@ -130,20 +158,36 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         achou = False
         orientador_nome = str()
         indiceOrientadorAchador = 0
-
+        quantia_nao_achados = 0
+        
+        nome_list = retorna_orientador_page(pageConteudo)
+        
+        nao_achado = False
         for orientador in orientadores:
             
             orientador_nome_procurar = orientador["nome"].replace('\n', '')
-            print(pageConteudo)
-            a = input('').split(" ")[0]
-            if(pageConteudo.find(orientador_nome_procurar) != -1) :
+            # Perccore a lista de nome e verifica se todos estão no nome
+            nome_correto = True
+
+            i = 0
+            for name in nome_list:
+                if orientador_nome_procurar.find(name) == -1:
+                    nome_correto = False
+            
+            if nome_correto :
                 orientador_nome = orientador
                 achou = True
                 orientadores_achados += 1
+                nao_achado = True # Verificar se não foi achado
                 break
-            
+    
+           
             indiceOrientadorAchador += 1
         
+        if nao_achado == False:
+            print(nome_list)
+            quantia_nao_achados += 1
+
        
         if(achou) :
             posicaoResumoInicial: int = 0
@@ -171,6 +215,7 @@ with open(nome_pdf, 'rb') as resumo_pdf:
    
     print(no_read)
     print(orientadores_achados)
+    print(quantia_nao_achados)
     resumo_pdf.close()
     
     
