@@ -1,9 +1,9 @@
 import PyPDF2
-from PyPDF2.pdf import PageObject
+#from PyPDF2.pdf import PageObject
 import re
 import json
 
-quantidadeResumos =  104 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
+quantidadeResumos =  94 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 indiceResumo = 0 # Indice de Resumo que indica que trabalho é aquele
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 no_read: int = 0   # Variável para poder encontrar alguma não leitura do pdf
@@ -15,9 +15,9 @@ orientadores_achados: int = 0
 #arquivo_alunos: str = input() # nome do arquivos de alunos para ler
 #nome_orientadores: str = input()
 
-nome_pdf = "DadosEnic/enic17.pdf"
-resumo_nome = "resumoOrientadores17.json"
-nome_orientadores = "DadosOrientadores/orientadores2017Areas.txt"
+nome_pdf = "../../DadosEnic/DadosEnic/enic14.pdf"
+resumo_nome = "resumoOrientadores14.json"
+nome_orientadores = "../DadosOrientadores/orientadores2014Areas.txt"
 
 
 
@@ -71,6 +71,7 @@ def abre_orientadores(orientadores_arquivo):
     orientadores_dados = list()
     orientadores_dictionary_list = list()
     indice = 0
+    
     while(indice < len(linhas)):
 
         orientadores["nome"] = linhas[indice]
@@ -79,6 +80,7 @@ def abre_orientadores(orientadores_arquivo):
         orientadores["subarea"] = orientadores_dados[1]
         orientadores_dictionary_list.append(orientadores.copy())
         indice += 2
+        
             
         
     
@@ -89,10 +91,11 @@ def abre_orientadores(orientadores_arquivo):
 #Estamos abrindo um arquivo para leitura binária, nomeado de resumo
 with open(nome_pdf, 'rb') as resumo_pdf:
     # Fazendo a leitura do documento e armazenando em um objeto chamado resumoRead
-    resumoRead = PyPDF2.PdfFileReader(resumo_pdf)
+    resumoRead = PyPDF2.PdfReader(resumo_pdf)
 
     # Pega-se o número de páginas e armazenar em um objeto chamado resumoPages
-    resumoPages = resumoRead.getNumPages()
+    resumoPages = len(resumoRead.pages)
+    
     # Nome do resumo a ser criado
   
 
@@ -102,11 +105,11 @@ with open(nome_pdf, 'rb') as resumo_pdf:
 
         # Vamos ler a página dada como parâmetro e armazenar em um objeto chamado page
 
-        page:PageObject = resumoRead.getPage(quantidadeResumos)
+        page = resumoRead.pages[quantidadeResumos]
 
         # Extraimos o texto daquele objeto extraido na linha anterior
 
-        pageConteudo = page.extractText()
+        pageConteudo = page.extract_text()
 
 
         
