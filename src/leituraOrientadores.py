@@ -134,6 +134,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         for orientador in orientadores:
             
             orientador_nome_procurar = orientador["nome"].replace('\n', '')
+            print(pageConteudo)
+            a = input('').split(" ")[0]
             if(pageConteudo.find(orientador_nome_procurar) != -1) :
                 orientador_nome = orientador
                 achou = True
