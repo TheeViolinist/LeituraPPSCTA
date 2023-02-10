@@ -110,7 +110,7 @@ SHARLINE FLORENTINO DE MELO SANTOS
 Engenharia Química Operações Industriais e Equipamentos para Engenharia Química
 CIZONE MARIA CARNEIRO ACIOLY
 Enfermagem Enfermagem Médico-Cirúrgica
-GENILDA ALVES DE AZEREDO
+GENILDA ALVES DE AZEREDO RODRIGUES
 Letras Literatura Brasileira
 JOSE MARIA BARBOSA FILHO
 Farmácia Farmacognosia
@@ -168,7 +168,7 @@ ANAND SUBRAMANIAN
 Engenharia de Produção Pesquisa Operacional
 GREICY KELLY GOUVEIA DIAS BITTENCOURT
 Enfermagem Enfermagem de Doenças Contagiosas
-RODRIGO SILVA ROSAL DE ARAJO
+RODRIGO SILVA ROSAL DE ARAÚJO
 Educação Fundamentos da Educação
 CACILDA CHAVES MORAIS DE LIMA
 Odontologia Materiais Odontológicos
@@ -756,7 +756,7 @@ FABIANO SALVADORI
 Engenharia Elétrica Medidas Elétricas Magnéticas e Eletrônicas
 ROSALIA GOUVEIA FILIZOLA
 Medicina Saúde Materno-Infantil
-MARIA PATRÍCIA LOPES GOLDFARB
+MARIA PATRÍCIA LOPES SULPINO
 Antropologia Antropologia Urbana
 CRISTIANE FRANCISCA DA COSTA SASSI
 Oceanografia Oceanografia Biológica
@@ -890,7 +890,7 @@ SAFIRA VALENCA BISPO
 Zootecnia Nutrição e Alimentação Animal
 JORGE GABRIEL GOMES DE SOUZA RAMOS
 Física Física Geral
-EVANGELINA MARIA BRITO DE FARIA
+EVANGELINA MARIA BRITO DE FARIAS
 Lingüística Psicolingüística
 CRISTIANO DAS NEVES ALMEIDA
 Engenharia Sanitária Recursos Hídricos
@@ -992,7 +992,7 @@ VIVEK NIGAM
 Ciência da Computação Teoria da Computação
 REINALDO NOBREGA DE ALMEIDA
 Farmacologia Etnofarmacologia
-JOVANKA BARACUHY CAVALCANTI
+JOVANKA BARACUHY CAVALCANTI SCOCUGLIA
 Arquitetura e Urbanismo Fundamentos de Arquitetura e Urbanismo
 JORDANA DE ALMEIDA NOGUEIRA
 Enfermagem Enfermagem de Doenças Contagiosas

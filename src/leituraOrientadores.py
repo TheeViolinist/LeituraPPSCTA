@@ -2,12 +2,14 @@ import PyPDF2
 #from PyPDF2.pdf import PageObject
 import re
 import json
+import unidecode
 
 quantidadeResumos =  94 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 indiceResumo = 0 # Indice de Resumo que indica que trabalho é aquele
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 no_read: int = 0   # Variável para poder encontrar alguma não leitura do pdf
 orientadores_achados: int = 0
+quantia_nao_achados: int = 0
 
 nome_pdf = "../DadosEnic/enic14.pdf"
 resumo_nome = "resumoOrientadores14.json"
@@ -104,7 +106,7 @@ def retorna_orientador_page(page):
 
     # Ano 2014 vamos pegar apenas os dois primeiros nomes
     nome = list()
-    
+    nome_total = unidecode.unidecode(nome_total) # retira os caracteres especiais do nome
     nome_total_separado = nome_total.split(' ')
     
     #Retira todos as letras sepradas
@@ -112,7 +114,8 @@ def retorna_orientador_page(page):
         if len(name) == 1:
             continue
         nome.append(name.upper())
-        
+
+    
     return nome
 
 
@@ -157,8 +160,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         
         achou = False
         orientador_nome = str()
-        indiceOrientadorAchador = 0
-        quantia_nao_achados = 0
+        indiceOrientadorAchado = 0
+        
         
         nome_list = retorna_orientador_page(pageConteudo)
         
@@ -166,6 +169,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         for orientador in orientadores:
             
             orientador_nome_procurar = orientador["nome"].replace('\n', '')
+            orientador_nome_procurar = unidecode.unidecode(orientador_nome_procurar) # Também retira os acentos para dar igual
+            
             # Perccore a lista de nome e verifica se todos estão no nome
             nome_correto = True
 
@@ -182,7 +187,7 @@ with open(nome_pdf, 'rb') as resumo_pdf:
                 break
     
            
-            indiceOrientadorAchador += 1
+            indiceOrientadorAchado += 1
         
         if nao_achado == False:
             print(nome_list)
@@ -201,7 +206,7 @@ with open(nome_pdf, 'rb') as resumo_pdf:
             posicaoResumoFinal  = pageConteudo.find("Palavras-Chave:")
         
             #Recebe-se o dicionário
-            resumo_dict: dict= escreve_texto(indiceResumo, orientador_nome, orientadores[indiceOrientadorAchador])
+            resumo_dict: dict= escreve_texto(indiceResumo, orientador_nome, orientadores[indiceOrientadorAchado])
             #Adiciona-se o dicionario na lista de resumos
             resumos.append(resumo_dict.copy())
         
