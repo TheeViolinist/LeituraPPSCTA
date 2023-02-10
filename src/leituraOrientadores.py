@@ -4,6 +4,11 @@ import re
 import json
 import unidecode
 
+#Codigo responsável pela leitura de um arquivo com os dados de orientadores e suas áreas
+#Do PDF responsável pelo enic daquele ano e cria um arquivo de dados contendo os resumos de cada orientador junto as suas áreas e subáreas
+
+
+
 quantidadeResumos =  94 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 indiceResumo = 0 # Indice de Resumo que indica que trabalho é aquele
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
