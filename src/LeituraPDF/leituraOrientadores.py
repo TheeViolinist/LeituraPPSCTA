@@ -17,7 +17,7 @@ orientadores_achados: int = 0
 quantia_nao_achados: int = 0
 
 nome_pdf = "../DadosEnic/enic14.pdf"
-resumo_nome = "resumoOrientadores14.json"
+resumo_nome = "../resumoOrientadores/resumoOrientadores14.json"
 nome_orientadores = "../DadosOrientadores/orientadores2014Areas.txt"
 
 
