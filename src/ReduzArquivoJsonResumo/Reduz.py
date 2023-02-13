@@ -22,18 +22,35 @@ def abre_arquivo_alocacao(caminho: str):
 
     return nome_projetos
 
+# Abre o arquivo de aval e associa cada orientador ao seu projeto
 def abre_arquivo_aval(caminho: str):
 
-    file = pd.read_csv(caminho, sep=',', enconding='UTF-8')
+    file = pd.read_csv(caminho, sep=',', encoding='UTF-8')
+    nome_projetos = file['Projeto:'].tolist()
+    nome_orientador = file['Orientador:'].tolist()
+    dados_orientador = list()
+    tamanho_csv = len(nome_projetos)
+
+    for i in range(tamanho_csv):
+        dados = dict()
+        dados['Orientador'] = nome_orientador[i].replace('\n', '').lower()
+        dados['projeto'] = nome_projetos[i].replace('\n', '').lower()
+        dados_orientador.append(dados)
+
     
+    return dados_orientador
+
 
 def main():
     caminho_resumo = "../resumoOrientadores/resumoOrientadores14.json"
     caminho_alocacao = "../AlocacoesEAval/2014.csv"
     caminho_aval = "../AlocacoesEAval/relatorios2014.csv"
 
-    trabalhos = abre_arquivo_resumos(caminho_resumo)
+    trabalhos_resumo = abre_arquivo_resumos(caminho_resumo)
     trabalhos_alocados = abre_arquivo_alocacao(caminho_alocacao)
+    trabalhos_totais = abre_arquivo_aval(caminho_aval)
+
+    
     return 0
 
 if __name__ == '__main__':
