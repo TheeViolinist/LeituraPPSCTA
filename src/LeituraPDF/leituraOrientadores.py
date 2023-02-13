@@ -2,7 +2,7 @@ import PyPDF2
 #from PyPDF2.pdf import PageObject
 import re
 import json
-import unidecode
+from unidecode import unidecode
 
 #Codigo responsável pela leitura de um arquivo com os dados de orientadores e suas áreas
 #Do PDF responsável pelo enic daquele ano e cria um arquivo de dados contendo os resumos de cada orientador junto as suas áreas e subáreas
@@ -123,12 +123,12 @@ with open(nome_pdf, 'rb') as resumo_pdf:
     resumoPages = len(resumoRead.pages)
     
     # Nome do resumo a ser criado
-    orientadores = abre_orientadores(nome_orientadores)
+    projetos = abre_orientadores(nome_orientadores)
 
     achados = 0
 
     while quantidadeResumos < resumoPages:
-        
+        print(quantidadeResumos)
 
         # Vamos ler a página dada como parâmetro e armazenar em um objeto chamado page
 
@@ -148,14 +148,18 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         projeto_contido = False
         
 
-        for projeto in orientadores:
+        for projeto in projetos:
             projeto_plano = re.sub(' ', '', projeto['Plano:'])
-            print(projeto_plano)
-            a = input()
-            if projeto_plano in pageConteudo:
-                print(pageConteudo)
-                a = input()
-
+    
+            if unidecode(projeto_plano) in unidecode(page_sem_espaco):
+                projeto_contido = True
+                achados += 1
+        
+        #if(projeto_contido == False):
+        #    print(pageConteudo)
+        #    a = input()
+                
+        
        
         #if(1) :
          #   posicaoResumoInicial: int = 0
