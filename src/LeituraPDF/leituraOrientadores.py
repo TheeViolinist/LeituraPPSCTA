@@ -67,24 +67,13 @@ def escreve_texto(indice, nome_orientador, dados_orientador):
 
 
 def abre_orientadores(orientadores_arquivo):
-    arq = open(orientadores_arquivo, 'r')
-
-    orientadores = dict()
-    linhas = arq.readlines()
-    orientadores_dados = list()
-    orientadores_dictionary_list = list()
-    indice = 0
     
-    while(indice < len(linhas)):
+    orientadores = list()
+    with open(orientadores_arquivo) as file:
+        orientadores = json.load(file)
+    file.close()
+    return orientadores
 
-        orientadores["nome"] = linhas[indice]
-        orientadores_dados = linhas[indice + 1].split(' ', 1)
-        orientadores["area"] = orientadores_dados[0]
-        orientadores["subarea"] = orientadores_dados[1]
-        orientadores_dictionary_list.append(orientadores.copy())
-        indice += 2
-           
-    return orientadores_dictionary_list
 
 def retorna_orientador_page(page):
     
@@ -134,8 +123,9 @@ with open(nome_pdf, 'rb') as resumo_pdf:
     resumoPages = len(resumoRead.pages)
     
     # Nome do resumo a ser criado
-  
+    orientadores = abre_orientadores(nome_orientadores)
 
+    achados = 0
 
     while quantidadeResumos < resumoPages:
         
@@ -152,78 +142,47 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         
         # Vamos retirar a quebra de linhas
         pageConteudo = re.sub('\n', '', pageConteudo)
-       
-
+        page_sem_espaco = re.sub(' ', '',pageConteudo)
         
-        # Primeiramente temos que retirar o nome dos autores do arquivo de texto
-        # Fazemos isso chamando a função nome_alunos o qual retorna uma lista contendo os nomes
-        #nome_autores:list = nome_alunos(arquivo_alunos)
         
-        orientadores = abre_orientadores(nome_orientadores)
+        projeto_contido = False
         
 
-
-        
-        achou = False
-        orientador_nome = str()
-        indiceOrientadorAchado = 0
-        
-        
-        nome_list = retorna_orientador_page(pageConteudo)
-        
-        nao_achado = False
-        for orientador in orientadores:
-            
-            orientador_nome_procurar = orientador["nome"].replace('\n', '')
-            orientador_nome_procurar = unidecode.unidecode(orientador_nome_procurar) # Também retira os acentos para dar igual
-            
-            # Perccore a lista de nome e verifica se todos estão no nome
-            nome_correto = True
-
-            i = 0
-            for name in nome_list:
-                if orientador_nome_procurar.find(name) == -1:
-                    nome_correto = False
-            
-            if nome_correto :
-                orientador_nome = orientador
-                achou = True
-                orientadores_achados += 1
-                nao_achado = True # Verificar se não foi achado
-                break
-    
-           
-            indiceOrientadorAchado += 1
-        
-        if nao_achado == False:
-            print(nome_list)
-            quantia_nao_achados += 1
+        for projeto in orientadores:
+            projeto_plano = re.sub(' ', '', projeto['Plano:'])
+            print(projeto_plano)
+            a = input()
+            if projeto_plano in pageConteudo:
+                print(pageConteudo)
+                a = input()
 
        
-        if(achou) :
-            posicaoResumoInicial: int = 0
+        #if(1) :
+         #   posicaoResumoInicial: int = 0
             #Vamos pegar a posição do início do resumo daquela página
-            if pageConteudo.find("Resumo:") != - 1:
-                posicaoResumoInicial = pageConteudo.find("Resumo:")
-            else:
-                posicaoResumoInicial = pageConteudo.find("RESUMO") - 1
+          #  if pageConteudo.find("Resumo:") != - 1:
+           #     posicaoResumoInicial = pageConteudo.find("Resumo:")
+            #else:
+             #   posicaoResumoInicial = pageConteudo.find("RESUMO") - 1
 
             #Posicao Final do resumo é quando achamos a string "Palavras-Chave:"
-            posicaoResumoFinal  = pageConteudo.find("Palavras-Chave:")
+            #posicaoResumoFinal  = pageConteudo.find("Palavras-Chave:")
         
             #Recebe-se o dicionário
-            resumo_dict: dict= escreve_texto(indiceResumo, orientador_nome, orientadores[indiceOrientadorAchado])
+            #resumo_dict: dict
+            #resumo_dict: dict= escreve_texto(indiceResumo, orientador_nome, orientadores[indiceOrientadorAchado])
             #Adiciona-se o dicionario na lista de resumos
-            resumos.append(resumo_dict.copy())
+            #resumos.append(resumo_dict.copy())
         
         quantidadeResumos += 1      # Aumenta-se em um a variável de controle do loop
-        indiceResumo += 1           # Aumenta-se em um o índice do resumo
-        nomeTrabalho = ''                   # Limpa-se o nome do trabalho
+        #indiceResumo += 1           # Aumenta-se em um o índice do resumo
+        #nomeTrabalho = ''                   # Limpa-se o nome do trabalho
 
-    with open(resumo_nome, 'w') as resumo_js:
-        json.dump(resumos, resumo_js, indent = 4, ensure_ascii=False)
-    resumo_js.close()
-   
+    #with open(resumo_nome, 'w') as resumo_js:
+    #    json.dump(resumos, resumo_js, indent = 4, ensure_ascii=False)
+    #resumo_js.close()
+    
+    print(achados)
     print(no_read)
     print(orientadores_achados)
     print(quantia_nao_achados)
