@@ -155,9 +155,9 @@ with open(nome_pdf, 'rb') as resumo_pdf:
                 projeto_contido = True
                 achados += 1
         
-        #if(projeto_contido == False):
-        #    print(pageConteudo)
-        #    a = input()
+        if(projeto_contido == False):
+            print(pageConteudo)
+            a = input()
                 
         
        
