@@ -17,7 +17,7 @@ orientadores_achados: int = 0
 quantia_nao_achados: int = 0
 
 nome_pdf = "../DadosEnic/enic14.pdf"
-resumo_nome = "../resumoOrientadores/cdresumoOrientadores14.json"
+resumo_nome = "../resumoOrientadores/resumoOrientadores14.json"
 nome_orientadores = "../CriadorDados/projetos2014.json"
 
 
@@ -124,8 +124,15 @@ with open(nome_pdf, 'rb') as resumo_pdf:
     
     # Nome do resumo a ser criado
     projetos = abre_orientadores(nome_orientadores)
-
+    
+    # Cria lista de projetos que foram achados ou não, inicaliza todas as variáveis como False
     achados = 0
+    projetos_contidos = list()
+    resumos = list()
+
+    for i in range(len(projetos)):
+        projetos_contidos.append(False)
+
 
     while quantidadeResumos < resumoPages:
         print(quantidadeResumos)
@@ -145,47 +152,59 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         page_sem_espaco = re.sub(' ', '',pageConteudo)
         
         
-        projeto_contido = False
+        projeto_achado = False
+        indice_projeto_achado = 0
+        indice = 0
         
-
+        
         for projeto in projetos:
+            
             projeto_plano = re.sub(' ', '', projeto['Plano:'])
-    
+            
             if unidecode(projeto_plano) in unidecode(page_sem_espaco):
-                projeto_contido = True
+                projeto_achado = True
                 achados += 1
-        
-        if(projeto_contido == False):
-            print(pageConteudo)
-            a = input()
-                
+                projetos_contidos[indice] = True
+                indice_projeto_achado = indice
+            indice += 1
+            
+              
         
        
-        #if(1) :
-         #   posicaoResumoInicial: int = 0
+        if(projeto_achado) :
+            posicaoResumoInicial: int = 0
             #Vamos pegar a posição do início do resumo daquela página
-          #  if pageConteudo.find("Resumo:") != - 1:
-           #     posicaoResumoInicial = pageConteudo.find("Resumo:")
-            #else:
-             #   posicaoResumoInicial = pageConteudo.find("RESUMO") - 1
+            if pageConteudo.find("Resumo:") != - 1:
+                posicaoResumoInicial = pageConteudo.find("Resumo:")
+            else:
+               posicaoResumoInicial = pageConteudo.find("RESUMO") - 1
 
             #Posicao Final do resumo é quando achamos a string "Palavras-Chave:"
-            #posicaoResumoFinal  = pageConteudo.find("Palavras-Chave:")
+            posicaoResumoFinal  = pageConteudo.find("Palavras-Chave:")
         
             #Recebe-se o dicionário
-            #resumo_dict: dict
+            resumo_dict = projetos[indice_projeto_achado]
+            resumo_dict['texto:'] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
+            resumo_dict['texto:'] = resumo_dict["texto:"].rstrip()
             #resumo_dict: dict= escreve_texto(indiceResumo, orientador_nome, orientadores[indiceOrientadorAchado])
             #Adiciona-se o dicionario na lista de resumos
-            #resumos.append(resumo_dict.copy())
+            resumos.append(resumo_dict.copy())
         
         quantidadeResumos += 1      # Aumenta-se em um a variável de controle do loop
-        #indiceResumo += 1           # Aumenta-se em um o índice do resumo
-        #nomeTrabalho = ''                   # Limpa-se o nome do trabalho
 
-    #with open(resumo_nome, 'w') as resumo_js:
-    #    json.dump(resumos, resumo_js, indent = 4, ensure_ascii=False)
-    #resumo_js.close()
+
+    with open(resumo_nome, 'w') as resumo_js:
+        json.dump(resumos, resumo_js, indent = 4, ensure_ascii=False)
+    resumo_js.close()
     
+
+    #i = 0
+    #for projeto_bool in projetos_contidos:
+    #    if projeto_bool == False:
+    #        print(i)
+    #        print(projetos[i]['Plano:'])
+    #        a = input()
+    #    i += 1
     print(achados)
     print(no_read)
     print(orientadores_achados)
