@@ -10,22 +10,15 @@ from unidecode import unidecode
 
 
 quantidadeResumos =  94 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
-indiceResumo = 0 # Indice de Resumo que indica que trabalho é aquele
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
-no_read: int = 0   # Variável para poder encontrar alguma não leitura do pdf
-orientadores_achados: int = 0
-quantia_nao_achados: int = 0
+
 
 nome_pdf = "../DadosEnic/enic14.pdf"
 resumo_nome = "../resumoOrientadores/resumoOrientadores14.json"
-nome_orientadores = "../CriadorDados/projetos2014.json"
+caminho_projetos = "../CriadorDados/projetos2014.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados14.txt"
 
-
-
-
-
-
-        
+      
 
 # Função responsável por retirar o email do nome
 # No Enic 17 foi necessário essa mudança, pois o algoritmo atual armazenava o email junto a string do nome
@@ -44,74 +37,17 @@ def retira_email(nome_e_email):
 
     return palavra_final
 
- 
 
-# Função responsável por escrever o texto inteiro em um arquivo 
-def escreve_texto(indice, nome_orientador, dados_orientador):
+#Abre o arquivo json de projetos
+def abre_projetos(projetos_arquivo):
     
-    # Criação de um dicionário
-    resumo:dict = {}
-    # Armazena-se nas chaves indice, titulo e texto todo o conteudo do resumo e retora-se esse dicionario
-    resumo["indice"] = indice
-    resumo["orientador"] = dados_orientador["nome"]
-    resumo["area"] = dados_orientador["area"]
-    resumo["subarea"] = dados_orientador["subarea"]
-    #Printa-se tudo que está após resumo, utilizamos posicaoResumoInicial + 8, pois 8 é o tamanho da string resumo e queremos iniciar após ela
-    #Logo, termina quando achar a string "Palavras-Chave: que está no índice posicaoResumoFinal"
-    resumo["texto"] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
-    resumo["texto"] = resumo["texto"].rstrip()
-
-    
-    return resumo
-
-
-
-def abre_orientadores(orientadores_arquivo):
-    
-    orientadores = list()
-    with open(orientadores_arquivo) as file:
-        orientadores = json.load(file)
+    projetos = list()
+    with open(projetos_arquivo) as file:
+        projetos = json.load(file)
     file.close()
-    return orientadores
+    return projetos
 
 
-def retorna_orientador_page(page):
-    
-    page = page.lower()
-    posicaoInicial = page.find('e-mail') + 6
-    posicaoFinal = page.find("orientador")
-    nome_total = str()
-    nome_total = page[posicaoInicial:posicaoFinal]
-    
-    #Processo de tratamento, vamos retirar os espaços entre os nomes
-    # Tratatei o nome até a primeira letra
-    for letra in nome_total:
-        if(letra == ')'):
-            nome_total = nome_total.replace(letra, '', 1)
-            break
-        nome_total = nome_total.replace(letra, '', 1)
-    
-    nome_total = nome_total.rstrip()
-    nome_total = nome_total.lstrip()
-
-
-   
-    # Retira todos os espaços em branco dubplo
-    nome_total = " ".join(re.split(r"\s+", nome_total))
-
-    # Ano 2014 vamos pegar apenas os dois primeiros nomes
-    nome = list()
-    nome_total = unidecode.unidecode(nome_total) # retira os caracteres especiais do nome
-    nome_total_separado = nome_total.split(' ')
-    
-    #Retira todos as letras sepradas
-    for name in nome_total_separado:
-        if len(name) == 1:
-            continue
-        nome.append(name.upper())
-
-    
-    return nome
 
 
 #Estamos abrindo um arquivo para leitura binária, nomeado de resumo
@@ -123,12 +59,12 @@ with open(nome_pdf, 'rb') as resumo_pdf:
     resumoPages = len(resumoRead.pages)
     
     # Nome do resumo a ser criado
-    projetos = abre_orientadores(nome_orientadores)
+    projetos = abre_projetos(caminho_projetos)
     
     # Cria lista de projetos que foram achados ou não, inicaliza todas as variáveis como False
     achados = 0
     projetos_contidos = list()
-    resumos = list()
+    
 
     for i in range(len(projetos)):
         projetos_contidos.append(False)
@@ -154,18 +90,19 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         
         projeto_achado = False
         indice_projeto_achado = 0
-        indice = 0
         
         
+        indice = 0 # Indice do projeto
         for projeto in projetos:
             
             projeto_plano = re.sub(' ', '', projeto['Plano:'])
-            
+
             if unidecode(projeto_plano) in unidecode(page_sem_espaco):
-                projeto_achado = True
-                achados += 1
+                projeto_achado = True #Diz se o projeto foi achado ou não
+                achados += 1    #Ver quantos foram achados
                 projetos_contidos[indice] = True
                 indice_projeto_achado = indice
+
             indice += 1
             
               
@@ -186,29 +123,28 @@ with open(nome_pdf, 'rb') as resumo_pdf:
             resumo_dict = projetos[indice_projeto_achado]
             resumo_dict['texto:'] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
             resumo_dict['texto:'] = resumo_dict["texto:"].rstrip()
-            #resumo_dict: dict= escreve_texto(indiceResumo, orientador_nome, orientadores[indiceOrientadorAchado])
+            
             #Adiciona-se o dicionario na lista de resumos
             resumos.append(resumo_dict.copy())
         
         quantidadeResumos += 1      # Aumenta-se em um a variável de controle do loop
 
-
+    # Responsável por criar o json do resumo dos orientadores
     with open(resumo_nome, 'w') as resumo_js:
         json.dump(resumos, resumo_js, indent = 4, ensure_ascii=False)
     resumo_js.close()
     
+    # Cria um arquivo txt responsável por dizer quais foram os planos não achados
+    arq_nao_achados = open(planos_nao_achados, "w+")
 
-    #i = 0
-    #for projeto_bool in projetos_contidos:
-    #    if projeto_bool == False:
-    #        print(i)
-    #        print(projetos[i]['Plano:'])
-    #        a = input()
-    #    i += 1
-    print(achados)
-    print(no_read)
-    print(orientadores_achados)
-    print(quantia_nao_achados)
+    for i in range(len(projetos_contidos)):
+        if projetos_contidos[i] == False:
+            arq_nao_achados.write(projetos[i]['Plano:'])
+            arq_nao_achados.write('\n')
+    arq_nao_achados.close()
+
+    
+    print(f'Foram achados{achados} resumos')
     resumo_pdf.close()
     
     
