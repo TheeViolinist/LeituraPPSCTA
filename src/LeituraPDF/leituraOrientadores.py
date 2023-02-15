@@ -117,7 +117,17 @@ with open(nome_pdf, 'rb') as resumo_pdf:
                posicaoResumoInicial = pageConteudo.find("RESUMO") - 1
 
             #Posicao Final do resumo é quando achamos a string "Palavras-Chave:"
-            posicaoResumoFinal  = pageConteudo.find("Palavras-Chave:")
+            
+            posicaoResumoFinal: int = 0
+            if pageConteudo.find("Palavras-Chave:") != -1:
+                posicaoResumoFinal = pageConteudo.find("Palavras-Chave:")
+            elif pageConteudo.find("Palav ras-Chave") != -1:
+                posicaoResumoFinal = pageConteudo.find("Palav ras-Chave")
+            elif pageConteudo.find("Palavras Chave") != -1:
+                posicaoResumoFinal = pageConteudo.find("Palavras Chave")
+            else:
+                posicaoResumoFinal = pageConteudo.find("Palavras -Chave")
+
         
             #Recebe-se o dicionário
             resumo_dict = projetos[indice_projeto_achado]
@@ -144,7 +154,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
     arq_nao_achados.close()
 
     
-    print(f'Foram achados{achados} resumos')
+    print(f'Foram achados {len(resumos)} resumos')
+    
     resumo_pdf.close()
     
     
