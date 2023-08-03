@@ -9,6 +9,18 @@ def abre_projetos(path):
     return data
 
 
+def trabalhos_orientados_orientadores(data_projetos, data_orientadores):
+    
+    for orientador in data_orientadores:
+        orientador_nome = orientador["Nome"]
+        trabalhos_orientados = list()
+        
+        for projeto in data_projetos:
+            if orientador_nome == projeto["Orientador:"]:
+                trabalhos_orientados.append(projeto["id"])
+        
+        orientador["Projetos"] = trabalhos_orientados
+        
 
 def read_orientadores(data_projetos):
     """Codigo responsável por retirar todos os orientadores unicos"""
@@ -37,6 +49,7 @@ def main():
     
     data_projetos = abre_projetos(path_projetos)
     orientadores_data = read_orientadores(data_projetos)
+    trabalhos_orientados_orientadores(data_projetos, orientadores_data)
     
     with open (orientadores_path, 'w') as orientadores_json:
         json.dump(orientadores_data, orientadores_json, indent=4, ensure_ascii=False)
