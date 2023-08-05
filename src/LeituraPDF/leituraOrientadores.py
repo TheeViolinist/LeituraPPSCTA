@@ -9,14 +9,14 @@ from unidecode import unidecode
 
 
 
-quantidadeResumos =  94 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
+quantidadeResumos =  96 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 
 
-nome_pdf = "../DadosEnic/enic14.pdf"
-resumo_nome = "../resumoOrientadores/resumoOrientadores14.json"
-caminho_projetos = "../CriadorDados/projetos2014.json"
-planos_nao_achados = "../resumoOrientadores/nao_achados14.txt"
+nome_pdf = "../DadosEnic/enic15.pdf"
+resumo_nome = "../resumoOrientadores/resumoOrientadores15.json"
+caminho_projetos = "../CriadorDadosModelo/projetos2015.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados15.txt"
 
       
 
