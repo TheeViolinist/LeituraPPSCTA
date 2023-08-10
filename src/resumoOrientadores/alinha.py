@@ -21,9 +21,9 @@ def abre_projetos(path_projetos):
 
 
 def main():
-    path_orientadores = "resumoOrientadores14.json"
-    path_projetos = "../CriadorDadosModelo/projetos2014.json"
-    resumo_nome = "resumoOrientadores14Alin.json"
+    path_orientadores = "resumoOrientadores15.json"
+    path_projetos = "../CriadorDadosModelo/projetos2015.json"
+    resumo_nome = "resumoOrientadores15Alin.json"
     orientadores_resumo = abre_orientadores(path_orientadores)
     projetos = abre_projetos(path_projetos)
 
@@ -36,7 +36,6 @@ def main():
     for projeto in projetos:
         for resumo in orientadores_resumo:
             if resumo['Projeto:'] == projeto['Projeto:']:
-                resumo['Id:'] = projeto["id"]
                 orientadores_resumo_alin.append(resumo)
 
 
