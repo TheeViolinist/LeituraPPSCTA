@@ -60,10 +60,10 @@ def abre_alocacao(caminho):
 
 def main():
     """Função main"""
-    caminho_aval = "../AlocacoesEAval/relatorios2017.csv"
-    caminho_alocacao = "../AlocacoesEAval/2017.csv"
-    trabalhos_nome = "projetos2017.json"
-    caminho_nao_encontrado = "nao_encontrados17.txt"
+    caminho_aval = "../AlocacoesEAval/relatorios2014.csv"
+    caminho_alocacao = "../AlocacoesEAval/2014.csv"
+    trabalhos_nome = "projetos2014.json"
+    caminho_nao_encontrado = "nao_encontrados14.txt"
 
     projetos_lidos = abre_arquivo_aval(caminho_aval)
     projetos_alocados = abre_alocacao(caminho_alocacao)
@@ -85,10 +85,12 @@ def main():
         projeto_processado = projeto_processado.decode("utf-8")
         projeto_processado = projeto_processado.lower().lstrip().rstrip()
         lidos.append(projeto_processado)
+    
     counter = 0
+    
     nao_encontrados = list()
     # Verifica se todos os trabalhos estão e salva os que não foram lidos
-    for lido in lidos:
+    for i, lido in enumerate(lidos):
         encontrado = False
         for alocado in alocados:
             if lido == alocado:

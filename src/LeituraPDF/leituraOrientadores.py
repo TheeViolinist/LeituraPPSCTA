@@ -8,15 +8,15 @@ from unidecode import unidecode
 #Do PDF responsável pelo enic daquele ano e cria um arquivo de dados contendo os resumos de cada orientador junto as suas áreas e subáreas
 
 
-
-quantidadeResumos =  104 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
+# A pagina inicial deve ser a pagina do pdf que começam os resumos -1
+quantidadeResumos =  93 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 
 
-nome_pdf = "../DadosEnic/enic17.pdf"
-resumo_nome = "../resumoOrientadores/resumoOrientadores17.json"
-caminho_projetos = "../CriadorDadosModelo/projetos2017.json"
-planos_nao_achados = "../resumoOrientadores/nao_achados17.txt"
+nome_pdf = "../DadosEnic/enic14.pdf"
+resumo_nome = "../resumoOrientadores/resumoOrientadores14.json"
+caminho_projetos = "../CriadorDadosModelo/projetos2014.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados14.txt"
 
       
 
@@ -87,6 +87,10 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         pageConteudo = re.sub('\n', '', pageConteudo)
         page_sem_espaco = re.sub(' ', '',pageConteudo)
         
+        if(quantidadeResumos== 875 or quantidadeResumos == 93):
+            print(unidecode(page_sem_espaco))
+            a = input()
+
         
         projeto_achado = False
         indice_projeto_achado = 0
