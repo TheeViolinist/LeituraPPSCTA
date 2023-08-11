@@ -13,10 +13,10 @@ quantidadeResumos =  96 # Variável que irá ser responsável por percorrer toda
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 
 
-nome_pdf = "../DadosEnic/enic15.pdf"
-resumo_nome = "../resumoOrientadores/resumoOrientadores15.json"
-caminho_projetos = "../CriadorDadosModelo/projetos2015.json"
-planos_nao_achados = "../resumoOrientadores/nao_achados15.txt"
+nome_pdf = "../DadosEnic/enic16.pdf"
+resumo_nome = "../resumoOrientadores/resumoOrientadores16.json"
+caminho_projetos = "../CriadorDadosModelo/projetos2016.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados16.txt"
 
       
 
