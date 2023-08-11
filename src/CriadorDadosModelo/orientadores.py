@@ -44,8 +44,8 @@ def read_orientadores(data_projetos):
     return orientadores_data
 
 def main():
-    path_projetos = 'projetos2016.json'
-    orientadores_path = 'orientadores16.json'
+    path_projetos = 'projetos2017.json'
+    orientadores_path = 'orientadores17.json'
     
     data_projetos = abre_projetos(path_projetos)
     orientadores_data = read_orientadores(data_projetos)

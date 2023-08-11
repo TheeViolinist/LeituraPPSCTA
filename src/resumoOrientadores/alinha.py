@@ -21,9 +21,9 @@ def abre_projetos(path_projetos):
 
 
 def main():
-    path_orientadores = "resumoOrientadores16.json"
-    path_projetos = "../CriadorDadosModelo/projetos2016.json"
-    resumo_nome = "resumoOrientadores16Alin.json"
+    path_orientadores = "resumoOrientadores17.json"
+    path_projetos = "../CriadorDadosModelo/projetos2017.json"
+    resumo_nome = "resumoOrientadores17Alin.json"
     orientadores_resumo = abre_orientadores(path_orientadores)
     projetos = abre_projetos(path_projetos)
 
