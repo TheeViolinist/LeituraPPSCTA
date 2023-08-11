@@ -38,7 +38,7 @@ def main():
             if resumo['Projeto:'] == projeto['Projeto:']:
                 orientadores_resumo_alin.append(resumo)
 
-
+    
     # Responsável por criar o json do resumo dos orientadores
     with open(resumo_nome, 'w') as resumo_js:
         json.dump(orientadores_resumo_alin, resumo_js, indent=4, ensure_ascii=False)

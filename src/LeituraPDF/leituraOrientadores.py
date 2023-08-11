@@ -99,12 +99,16 @@ with open(nome_pdf, 'rb') as resumo_pdf:
             
             projeto_plano = re.sub(' ', '', projeto['Plano:'])
             projeto_plano = unidecode(projeto_plano)
+            projeto_orientador = unidecode(re.sub(' ', '', projeto['Orientador:']))
 
+            #Caso não conseguirmos encontrar pelo nome, vamos verificar se o orientador está, caso sim, vamos considerar como sendo
             if projeto_plano in page_sem_espaco:
                 projeto_achado = True #Diz se o projeto foi achado ou não
                 achados += 1    #Ver quantos foram achados
                 projetos_contidos[indice] = True
                 indice_projeto_achado = indice
+                break
+
 
             indice += 1
             
@@ -152,7 +156,7 @@ with open(nome_pdf, 'rb') as resumo_pdf:
 
     for i in range(len(projetos_contidos)):
         if projetos_contidos[i] == False:
-            arq_nao_achados.write(projetos[i]['Plano:'])
+            arq_nao_achados.write(str(i) + ' ')
             arq_nao_achados.write('\n')
     arq_nao_achados.close()
 
