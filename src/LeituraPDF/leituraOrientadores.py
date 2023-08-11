@@ -86,10 +86,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         # Vamos retirar a quebra de linhas
         pageConteudo = re.sub('\n', '', pageConteudo)
         page_sem_espaco = re.sub(' ', '',pageConteudo)
-        
-        if(quantidadeResumos== 875 or quantidadeResumos == 93):
-            print(unidecode(page_sem_espaco))
-            a = input()
+        page_sem_espaco = unidecode(page_sem_espaco)
+
 
         
         projeto_achado = False
@@ -100,8 +98,9 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         for projeto in projetos:
             
             projeto_plano = re.sub(' ', '', projeto['Plano:'])
+            projeto_plano = unidecode(projeto_plano)
 
-            if unidecode(projeto_plano) in unidecode(page_sem_espaco):
+            if projeto_plano in page_sem_espaco:
                 projeto_achado = True #Diz se o projeto foi achado ou não
                 achados += 1    #Ver quantos foram achados
                 projetos_contidos[indice] = True
