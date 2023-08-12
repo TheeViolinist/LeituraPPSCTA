@@ -9,14 +9,14 @@ from unidecode import unidecode
 
 
 # A pagina inicial deve ser a pagina do pdf que começam os resumos -1
-quantidadeResumos =  93 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
+quantidadeResumos =  95 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 
 
-nome_pdf = "../DadosEnic/enic14.pdf"
-resumo_nome = "../resumoOrientadores/resumoOrientadores14.json"
-caminho_projetos = "../CriadorDadosModelo/projetos2014.json"
-planos_nao_achados = "../resumoOrientadores/nao_achados14.txt"
+nome_pdf = "../DadosEnic/enic15.pdf"
+resumo_nome = "../resumoOrientadores/resumoOrientadores15.json"
+caminho_projetos = "../CriadorDadosModelo/projetos2015.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados15.txt"
 
       
 
@@ -49,6 +49,18 @@ def abre_projetos(projetos_arquivo):
 
 
 
+#Função responsável por receber uma string e retornar apenas em formato asc
+def asc_string(string):
+
+    text = ''
+    for letter in string:
+        if ord(letter) <= 122 and ord(letter) >= 97:
+            text.join(letter)
+
+    return text
+
+
+
 
 #Estamos abrindo um arquivo para leitura binária, nomeado de resumo
 with open(nome_pdf, 'rb') as resumo_pdf:
@@ -72,7 +84,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
 
     while quantidadeResumos < resumoPages:
         print(quantidadeResumos)
-
+        
+            
         # Vamos ler a página dada como parâmetro e armazenar em um objeto chamado page
 
         page = resumoRead.pages[quantidadeResumos]
@@ -86,7 +99,8 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         # Vamos retirar a quebra de linhas
         pageConteudo = re.sub('\n', '', pageConteudo)
         page_sem_espaco = re.sub(' ', '',pageConteudo)
-        page_sem_espaco = unidecode(page_sem_espaco)
+        page_sem_espaco = asc_string(page_sem_espaco.lower())
+
 
 
         
@@ -95,23 +109,27 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         
         
         indice = 0 # Indice do projeto
-        for projeto in projetos:
-            
-            projeto_plano = re.sub(' ', '', projeto['Plano:'])
-            projeto_plano = unidecode(projeto_plano)
-            projeto_orientador = unidecode(re.sub(' ', '', projeto['Orientador:']))
 
-            #Caso não conseguirmos encontrar pelo nome, vamos verificar se o orientador está, caso sim, vamos considerar como sendo
-            if projeto_plano in page_sem_espaco:
-                projeto_achado = True #Diz se o projeto foi achado ou não
-                achados += 1    #Ver quantos foram achados
+        
+        #Como no enic, o plano geralmente não tem nada do asc, vamos retirar e deixar a pagina em lower
+     
+        for projeto in projetos:
+                    
+            projeto_plano = re.sub(' ', '', projeto['Plano:']).lower()
+            
+            text_treated = asc_string(projeto_plano)
+                     
+            if text_treated in page_sem_espaco:
+                projeto_achado = True
+                achados += 1
                 projetos_contidos[indice] = True
                 indice_projeto_achado = indice
                 break
-
-
-            indice += 1
-            
+                
+            indice += 1        
+                        
+        
+   
               
         
        
