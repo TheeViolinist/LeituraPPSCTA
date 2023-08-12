@@ -60,10 +60,10 @@ def abre_alocacao(caminho):
 
 def main():
     """Função main"""
-    caminho_aval = "../AlocacoesEAval/relatorios2015.csv"
-    caminho_alocacao = "../AlocacoesEAval/2015.csv"
-    trabalhos_nome = "projetos2015.json"
-    caminho_nao_encontrado = "nao_encontrados15.txt"
+    caminho_aval = "../AlocacoesEAval/relatorios2016.csv"
+    caminho_alocacao = "../AlocacoesEAval/2016.csv"
+    trabalhos_nome = "projetos2016.json"
+    caminho_nao_encontrado = "nao_encontrados16.txt"
 
     projetos_lidos = abre_arquivo_aval(caminho_aval)
     projetos_alocados = abre_alocacao(caminho_alocacao)

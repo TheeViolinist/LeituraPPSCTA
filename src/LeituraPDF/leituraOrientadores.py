@@ -13,10 +13,10 @@ quantidadeResumos =  95 # Variável que irá ser responsável por percorrer toda
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 
 
-nome_pdf = "../DadosEnic/enic15.pdf"
-resumo_nome = "../resumoOrientadores/resumoOrientadores15.json"
-caminho_projetos = "../CriadorDadosModelo/projetos2015.json"
-planos_nao_achados = "../resumoOrientadores/nao_achados15.txt"
+nome_pdf = "../DadosEnic/enic16.pdf"
+resumo_nome = "../resumoOrientadores/resumoOrientadores16.json"
+caminho_projetos = "../CriadorDadosModelo/projetos2016.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados16.txt"
 
       
 
@@ -157,11 +157,18 @@ with open(nome_pdf, 'rb') as resumo_pdf:
             resumo_dict['texto:'] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
             resumo_dict['texto:'] = resumo_dict["texto:"].rstrip()
             
-            #Adiciona-se o dicionario na lista de resumos
-            resumos.append(resumo_dict.copy())
+            incluso = False
+            for resumo in resumos:
+                if resumo["id"] == resumo_dict["id"]:
+                    incluso = True
+                    
+            if not incluso:
+                #Adiciona-se o dicionario na lista de resumos
+                resumos.append(resumo_dict.copy())
         
         quantidadeResumos += 1      # Aumenta-se em um a variável de controle do loop
 
+    
     # Responsável por criar o json do resumo dos orientadores
     with open(resumo_nome, 'w') as resumo_js:
         json.dump(resumos, resumo_js, indent = 4, ensure_ascii=False)
@@ -174,6 +181,7 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         if projetos_contidos[i] == False:
             arq_nao_achados.write(str(i) + ' ')
             arq_nao_achados.write('\n')
+            
     arq_nao_achados.close()
 
     
