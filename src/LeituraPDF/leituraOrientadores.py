@@ -55,11 +55,9 @@ def asc_string(string):
     text = ''
     for letter in string:
         if ord(letter) <= 122 and ord(letter) >= 97:
-            text.join(letter)
+            text += letter
 
     return text
-
-
 
 
 #Estamos abrindo um arquivo para leitura binária, nomeado de resumo
