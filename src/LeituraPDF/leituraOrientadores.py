@@ -137,12 +137,12 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         
         projeto_achado = False
         indice_projeto_achado = 0
-        
+
         for j, page in enumerate(enic_resumos):
 
            
-    
-            if enic_resumos_sem_espaco[j].find(text_treated):
+            
+            if text_treated in enic_resumos_sem_espaco[j]:
                 projeto_achado = True
                 achados += 1
                 projetos_contidos[i] = True
