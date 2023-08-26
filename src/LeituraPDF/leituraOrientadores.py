@@ -1,5 +1,6 @@
-import PyPDF2
-#from PyPDF2.pdf import PageObject
+
+
+import fitz  # PyMuPDF
 import re
 import json
 from unidecode import unidecode
@@ -9,14 +10,14 @@ from unidecode import unidecode
 
 
 # A pagina inicial deve ser a pagina do pdf que começam os resumos -1
-quantidadeResumos =  95 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
+quantidadeResumos =  103 # Variável que irá ser responsável por percorrer todas as páginas que possuem resumo
 resumos: list = []  # Lista onde ficará armazenado os dicionários sobre cada resumo
 
 
-nome_pdf = "../DadosEnic/enic16.pdf"
-resumo_nome = "../resumoOrientadores/resumoOrientadores16.json"
-caminho_projetos = "../CriadorDadosModelo/projetos2016.json"
-planos_nao_achados = "../resumoOrientadores/nao_achados16.txt"
+nome_pdf = "../DadosEnic/enic17.pdf"
+resumo_nome = "../resumoOrientadores/resumoOrientadores17.json"
+caminho_projetos = "../CriadorDadosModelo/projetos2017.json"
+planos_nao_achados = "../resumoOrientadores/nao_achados17.txt"
 
       
 
@@ -48,6 +49,22 @@ def abre_projetos(projetos_arquivo):
     return projetos
 
 
+def clean_text(text):
+    # Substituir múltiplos espaços por um único espaço
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Remover caracteres especiais e não-ASCII
+    text = re.sub(r'[^\x00-\x7F]+', ' ', text)
+    
+    # Remover quebras de linha e tabulações
+    text = text.replace('\n', ' ').replace('\t', ' ')
+    
+    # Remover espaços em branco extras no início e no final
+    text = text.strip()
+    
+    return text
+
+
 
 #Função responsável por receber uma string e retornar apenas em formato asc
 def asc_string(string):
@@ -63,10 +80,11 @@ def asc_string(string):
 #Estamos abrindo um arquivo para leitura binária, nomeado de resumo
 with open(nome_pdf, 'rb') as resumo_pdf:
     # Fazendo a leitura do documento e armazenando em um objeto chamado resumoRead
-    resumoRead = PyPDF2.PdfReader(resumo_pdf)
+    resumoRead = fitz.open(stream=resumo_pdf.read(), filetype="pdf")
+
 
     # Pega-se o número de páginas e armazenar em um objeto chamado resumoPages
-    resumoPages = len(resumoRead.pages)
+    resumoPages = resumoRead.page_count
     
     # Nome do resumo a ser criado
     projetos = abre_projetos(caminho_projetos)
@@ -80,93 +98,93 @@ with open(nome_pdf, 'rb') as resumo_pdf:
         projetos_contidos.append(False)
 
 
+    enic_resumos = list()
+    enic_resumos_sem_espaco = list()
     while quantidadeResumos < resumoPages:
         print(quantidadeResumos)
         
             
         # Vamos ler a página dada como parâmetro e armazenar em um objeto chamado page
 
-        page = resumoRead.pages[quantidadeResumos]
+        page = resumoRead.load_page(quantidadeResumos)
 
         # Extraimos o texto daquele objeto extraido na linha anterior
 
-        pageConteudo = page.extract_text()
-
-
-        
-        # Vamos retirar a quebra de linhas
+        pageConteudo = page.get_text("text")
         pageConteudo = re.sub('\n', '', pageConteudo)
-        page_sem_espaco = re.sub(' ', '',pageConteudo)
-        page_sem_espaco = asc_string(page_sem_espaco.lower())
+        
+        # Lista para retirar os resumos
+        enic_resumos.append(pageConteudo)
 
 
+        # Tratamento para localizar o plano
+        # Pois algumas instancias do ENIC bugava com letras não ascii
+        page_sem_espaco = (re.sub(' ', '', pageConteudo)).lower()
+        page_sem_espaco = asc_string(page_sem_espaco)
+        enic_resumos_sem_espaco.append(page_sem_espaco)
+  
+        
+        quantidadeResumos += 1
+        
+    print("Lido todo o PDF")
 
+    for i, projeto in enumerate(projetos):
+        # Realiza o tratamento do texto para o nome do plano
+        projeto_plano = re.sub('\n', '', projeto['Plano:'])
+        projeto_plano = re.sub(' ', '', projeto_plano)
+        text_treated = asc_string(projeto_plano.lower())
+        
         
         projeto_achado = False
         indice_projeto_achado = 0
         
-        
-        indice = 0 # Indice do projeto
+        for j, page in enumerate(enic_resumos):
 
-        
-        #Como no enic, o plano geralmente não tem nada do asc, vamos retirar e deixar a pagina em lower
-     
-        for projeto in projetos:
-                    
-            projeto_plano = re.sub(' ', '', projeto['Plano:']).lower()
-            
-            text_treated = asc_string(projeto_plano)
-                     
-            if text_treated in page_sem_espaco:
+           
+    
+            if enic_resumos_sem_espaco[j].find(text_treated):
                 projeto_achado = True
                 achados += 1
-                projetos_contidos[indice] = True
-                indice_projeto_achado = indice
-                break
+                projetos_contidos[i] = True
+                indice_projeto_achado = i
                 
-            indice += 1        
+            if(projeto_achado) :
+                posicaoResumoInicial: int = 0
+                #Vamos pegar a posição do início do resumo daquela página
+                if page.find("Resumo:") != - 1:
+                    posicaoResumoInicial = page.find("Resumo:")
+                else:
+                    posicaoResumoInicial = page.find("RESUMO") - 1
+
+                #Posicao Final do resumo é quando achamos a string "Palavras-Chave:"
+                
+                posicaoResumoFinal: int = 0
+                if pageConteudo.find("Palavras-Chave:") != -1:
+                    posicaoResumoFinal = page.find("Palavras-Chave:")
+                elif pageConteudo.find("Palav ras-Chave") != -1:
+                    posicaoResumoFinal = page.find("Palav ras-Chave")
+                elif pageConteudo.find("Palavras Chave") != -1:
+                    posicaoResumoFinal = page.find("Palavras Chave")
+                else:
+                    posicaoResumoFinal = page.find("Palavras -Chave")
+
+            
+                #Recebe-se o dicionário
+                resumo_dict = projetos[indice_projeto_achado]
+                resumo_dict['texto:'] = page[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
+                resumo_dict['texto:'] = resumo_dict["texto:"].rstrip()
+                
+                incluso = False
+                for resumo in resumos:
+                    if resumo["id"] == resumo_dict["id"]:
+                        incluso = True
                         
-        
-   
-              
-        
+                if not incluso:
+                    #Adiciona-se o dicionario na lista de resumos
+                    resumos.append(resumo_dict.copy())
+                break
+            
        
-        if(projeto_achado) :
-            posicaoResumoInicial: int = 0
-            #Vamos pegar a posição do início do resumo daquela página
-            if pageConteudo.find("Resumo:") != - 1:
-                posicaoResumoInicial = pageConteudo.find("Resumo:")
-            else:
-               posicaoResumoInicial = pageConteudo.find("RESUMO") - 1
-
-            #Posicao Final do resumo é quando achamos a string "Palavras-Chave:"
-            
-            posicaoResumoFinal: int = 0
-            if pageConteudo.find("Palavras-Chave:") != -1:
-                posicaoResumoFinal = pageConteudo.find("Palavras-Chave:")
-            elif pageConteudo.find("Palav ras-Chave") != -1:
-                posicaoResumoFinal = pageConteudo.find("Palav ras-Chave")
-            elif pageConteudo.find("Palavras Chave") != -1:
-                posicaoResumoFinal = pageConteudo.find("Palavras Chave")
-            else:
-                posicaoResumoFinal = pageConteudo.find("Palavras -Chave")
-
-        
-            #Recebe-se o dicionário
-            resumo_dict = projetos[indice_projeto_achado]
-            resumo_dict['texto:'] = pageConteudo[posicaoResumoInicial + 8:posicaoResumoFinal].lstrip()
-            resumo_dict['texto:'] = resumo_dict["texto:"].rstrip()
-            
-            incluso = False
-            for resumo in resumos:
-                if resumo["id"] == resumo_dict["id"]:
-                    incluso = True
-                    
-            if not incluso:
-                #Adiciona-se o dicionario na lista de resumos
-                resumos.append(resumo_dict.copy())
-        
-        quantidadeResumos += 1      # Aumenta-se em um a variável de controle do loop
 
     
     # Responsável por criar o json do resumo dos orientadores
